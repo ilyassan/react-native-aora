@@ -15,7 +15,7 @@ const FormField = ({title, value, placeholder, handleChangeText, secure = false,
             placeholder={placeholder}
             placeholderTextColor="#7b7b8b"
             value={value}
-            onChange={handleChangeText}
+            onChangeText={handleChangeText}
             className="flex-1 text-white"
             secureTextEntry={secure && !showPassword}
         />

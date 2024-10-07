@@ -1,10 +1,10 @@
-import { View, Text, ScrollView, Image } from 'react-native'
+import { View, Text, ScrollView, Image, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from '../../constants'
 import FormField from '../../components/FormField'
 import CustomButton from '../../components/CustomButton'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
 import { createUser } from '../../lib/appwrite'
 
 const SignUp = () => {
@@ -15,6 +15,27 @@ const SignUp = () => {
     password: "",
   });
   const [isSubmiting, setIsSubmiting] = useState(false);
+
+  const handleSubmit = async() => {
+    const {username, email, password} = form;
+
+    if (!username || !email || !password) {
+      Alert.alert("Error", "Please fill in all the fields.");
+      return;
+    }
+
+    setIsSubmiting(true);
+
+    try {
+      const result = await createUser(email, password, username)
+
+      router.replace("/home")
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    } finally {
+      setIsSubmiting(false);
+    }
+  }
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -32,8 +53,8 @@ const SignUp = () => {
             title="Username"
             placeholder="Enter your username"
             value={form.username}
-            handleChangeText={(e) => setForm({
-              ...form, username: e
+            handleChangeText={(text) => setForm({
+              ...form, username: text
             })}
             otherStyles="mt-7"
           />
@@ -41,8 +62,8 @@ const SignUp = () => {
             title="Email"
             placeholder="Enter your email"
             value={form.email}
-            handleChangeText={(e) => setForm({
-              ...form, email: e
+            handleChangeText={(text) => setForm({
+              ...form, email: text
             })}
             otherStyles="mt-5"
           />
@@ -50,8 +71,8 @@ const SignUp = () => {
             title="Password"
             placeholder="Enter your password"
             value={form.password}
-            handleChangeText={(e) => setForm({
-              ...form, password: e
+            handleChangeText={(text) => setForm({
+              ...form, password: text
             })}
             otherStyles="mt-5"
             secure
@@ -62,6 +83,7 @@ const SignUp = () => {
           title="Sign Up"
           containerStyles="mt-8"
           isLoading={isSubmiting}
+          handlePress={handleSubmit}
         />
 
         <View className="flex-row justify-center items-center gap-2 pt-5">
